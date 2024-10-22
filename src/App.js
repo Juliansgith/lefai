@@ -1,34 +1,39 @@
+// App.js
 import React, { useState } from 'react';
-import { CssBaseline, Box, createTheme, ThemeProvider } from '@mui/material';
+import { CssBaseline, Box, createTheme, ThemeProvider, Toolbar } from '@mui/material';
 import Sidebar from './components/Sidebar';
 import HBOI from './pages/HBOI';
 import Vaardigheden from './pages/Vaardigheden';
+import AppBar from './components/AppBar';
 
 const App = () => {
   const [selectedTab, setSelectedTab] = useState('Vaardigheden');
   const [darkMode, setDarkMode] = useState(true);
 
+  // State to control the mobile drawer
+  const [mobileOpen, setMobileOpen] = useState(false);
+
   const theme = createTheme({
     palette: {
       mode: darkMode ? 'dark' : 'light',
-      primary: {
-        main: '#1976d2',
-      },
-      background: {
-        default: darkMode ? '#121212' : '#f0f0f0',
-        paper: darkMode ? '#1e1e1e' : '#ffffff',
-      },
     },
     typography: {
-      fontFamily: 'Arial, sans-serif',
-      h6: {
-        fontWeight: 600,
-      },
+      fontFamily: 'Roboto, Arial, sans-serif',
     },
   });
 
   const handleThemeToggle = () => {
     setDarkMode((prevMode) => !prevMode);
+  };
+
+  const handleDrawerToggle = () => {
+    setMobileOpen(!mobileOpen);
+  };
+
+  const handleTabSelect = (tab) => {
+    setSelectedTab(tab);
+    // Close the drawer when a tab is selected on mobile
+    setMobileOpen(false);
   };
 
   const renderContent = () => {
@@ -45,9 +50,21 @@ const App = () => {
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
-      <Box sx={{ display: 'flex', height: '100vh' }}>
-        <Sidebar onSelect={setSelectedTab} onThemeToggle={handleThemeToggle} darkMode={darkMode} />
+      <Box sx={{ display: 'flex' }}>
+        <AppBar
+          onThemeToggle={handleThemeToggle}
+          darkMode={darkMode}
+          handleDrawerToggle={handleDrawerToggle}
+        />
+        <Sidebar
+          onSelect={handleTabSelect}
+          selectedTab={selectedTab}
+          mobileOpen={mobileOpen}
+          handleDrawerToggle={handleDrawerToggle}
+        />
         <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
+          {/* Add a toolbar to account for the AppBar height */}
+          <Toolbar />
           {renderContent()}
         </Box>
       </Box>

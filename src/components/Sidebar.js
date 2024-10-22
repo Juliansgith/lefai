@@ -1,54 +1,77 @@
+// components/Sidebar.js
 import React from 'react';
-import { Drawer, List, ListItem, ListItemText, IconButton, Box } from '@mui/material';
-import DarkModeIcon from '@mui/icons-material/DarkMode';
-import LightModeIcon from '@mui/icons-material/LightMode';
+import {
+  Drawer,
+  List,
+  ListItem,
+  ListItemText,
+  useTheme,
+  useMediaQuery,
+  Toolbar,
+  Divider,
+} from '@mui/material';
 
-const Sidebar = ({ onSelect, onThemeToggle, darkMode }) => {
+const drawerWidth = 240;
+
+const Sidebar = ({ onSelect, selectedTab, mobileOpen, handleDrawerToggle }) => {
   const items = ['Beroepstaken', 'Vaardigheden'];
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
-  return (
-    <Drawer
-      variant="permanent"
-      sx={{
-        width: 240,
-        '& .MuiDrawer-paper': {
-          width: 240,
-          backgroundColor: darkMode ? '#1e1e1e' : '#f0f0f0',
-          color: darkMode ? '#ffffff' : '#000000',
-        },
-      }}
-    >
-      <Box
-        sx={{
-          p: 3,
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'center',
-        }}
-      >
-        <IconButton onClick={onThemeToggle} size="large">
-          {darkMode ? <LightModeIcon fontSize="large" /> : <DarkModeIcon fontSize="large" />}
-        </IconButton>
-      </Box>
+  const drawerContent = (
+    <div>
+      <Toolbar />
+      <Divider />
       <List>
-        {items.map((text, index) => (
+        {items.map((text) => (
           <ListItem
             button
-            key={index}
+            key={text}
+            selected={selectedTab === text}
             onClick={() => onSelect(text)}
-            sx={{
-              py: 2, // Increase vertical padding
-              '& .MuiListItemText-primary': {
-                fontSize: '1.2rem', // Increase font size
-                fontWeight: 'bold', // Make text bold
-              },
-            }}
           >
             <ListItemText primary={text} />
           </ListItem>
         ))}
       </List>
-    </Drawer>
+    </div>
+  );
+
+  return (
+    <>
+      {/* Mobile Drawer */}
+      {isMobile && (
+        <Drawer
+          variant="temporary"
+          open={mobileOpen}
+          onClose={handleDrawerToggle}
+          ModalProps={{
+            keepMounted: true, // Better open performance on mobile.
+          }}
+          sx={{
+            '& .MuiDrawer-paper': { boxSizing: 'border-box', width: drawerWidth },
+          }}
+        >
+          {drawerContent}
+        </Drawer>
+      )}
+      {/* Desktop Drawer */}
+      {!isMobile && (
+        <Drawer
+          variant="permanent"
+          sx={{
+            width: drawerWidth,
+            flexShrink: 0,
+            '& .MuiDrawer-paper': {
+              width: drawerWidth,
+              boxSizing: 'border-box',
+            },
+          }}
+        >
+          {drawerContent}
+        </Drawer>
+      )}
+    </>
   );
 };
 
