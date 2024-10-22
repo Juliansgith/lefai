@@ -1,16 +1,16 @@
 import React, { useState } from 'react';
 import { Box, Button, Typography, Paper, Grid } from '@mui/material';
 
-const TabContent = ({ data }) => {
+function TabContent({ data }) {
   const [selectedCategory, setSelectedCategory] = useState('');
   const [selectedActivity, setSelectedActivity] = useState('');
 
-  const handleCategorySelect = (category) => {
+  const handleCategorySelect = category => {
     setSelectedCategory(category);
     setSelectedActivity(''); // Reset the activity selection when a new category is chosen
   };
 
-  const handleActivitySelect = (activity) => {
+  const handleActivitySelect = activity => {
     setSelectedActivity(activity);
   };
 
@@ -19,12 +19,16 @@ const TabContent = ({ data }) => {
       <Grid container spacing={2}>
         {/* Architectuurlagen */}
         <Grid item xs={6}>
-          <Typography variant="h6" gutterBottom>Architectuurlagen</Typography>
+          <Typography variant="h6" gutterBottom>
+            Architectuurlagen
+          </Typography>
           <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
             {Object.keys(data).map((category, index) => (
               <Button
                 key={index}
-                variant={selectedCategory === category ? 'contained' : 'outlined'}
+                variant={
+                  selectedCategory === category ? 'contained' : 'outlined'
+                }
                 onClick={() => handleCategorySelect(category)}
                 fullWidth
               >
@@ -36,20 +40,28 @@ const TabContent = ({ data }) => {
 
         {/* Activiteiten */}
         <Grid item xs={6}>
-          <Typography variant="h6" gutterBottom>Activiteiten</Typography>
+          <Typography variant="h6" gutterBottom>
+            Activiteiten
+          </Typography>
           <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
-            {['Analyseren', 'Adviseren', 'Ontwerpen', 'Realiseren', 'Manage & Control'].map(
-              (activity, index) => (
-                <Button
-                  key={index}
-                  variant={selectedActivity === activity ? 'contained' : 'outlined'}
-                  onClick={() => handleActivitySelect(activity)}
-                  fullWidth
-                >
-                  {activity}
-                </Button>
-              )
-            )}
+            {[
+              'Analyseren',
+              'Adviseren',
+              'Ontwerpen',
+              'Realiseren',
+              'Manage & Control',
+            ].map((activity, index) => (
+              <Button
+                key={index}
+                variant={
+                  selectedActivity === activity ? 'contained' : 'outlined'
+                }
+                onClick={() => handleActivitySelect(activity)}
+                fullWidth
+              >
+                {activity}
+              </Button>
+            ))}
           </Box>
         </Grid>
       </Grid>
@@ -63,13 +75,15 @@ const TabContent = ({ data }) => {
             </Typography>
             {/* Here, display the content based on the selectedCategory and selectedActivity */}
             {data[selectedCategory][selectedActivity] && (
-              <Typography>{data[selectedCategory][selectedActivity].title}</Typography>
+              <Typography>
+                {data[selectedCategory][selectedActivity].title}
+              </Typography>
             )}
           </Box>
         )}
       </Box>
     </Paper>
   );
-};
+}
 
 export default TabContent;

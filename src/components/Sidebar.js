@@ -1,5 +1,6 @@
 // components/Sidebar.js
 import React from 'react';
+import PropTypes from 'prop-types';
 import {
   Drawer,
   List,
@@ -13,7 +14,7 @@ import {
 
 const drawerWidth = 240;
 
-const Sidebar = ({ onSelect, selectedTab, mobileOpen, handleDrawerToggle }) => {
+function Sidebar({ onSelect, selectedTab, mobileOpen, handleDrawerToggle }) {
   const items = ['Beroepstaken', 'Vaardigheden'];
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
@@ -22,40 +23,44 @@ const Sidebar = ({ onSelect, selectedTab, mobileOpen, handleDrawerToggle }) => {
     <div>
       <Toolbar />
       <Divider />
-      <List>
-        {items.map((text) => (
-          <ListItem
-            button
-            key={text}
-            selected={selectedTab === text}
-            onClick={() => onSelect(text)}
-          >
-            <ListItemText primary={text} />
-          </ListItem>
-        ))}
-      </List>
+      <nav aria-label="main navigation">
+        <List>
+          {items.map(text => (
+            <ListItem
+              button
+              key={text}
+              selected={selectedTab === text}
+              onClick={() => onSelect(text)}
+              aria-label={`Navigate to ${text}`}
+            >
+              <ListItemText primary={text} />
+            </ListItem>
+          ))}
+        </List>
+      </nav>
     </div>
   );
 
   return (
     <>
-      {/* Mobile Drawer */}
       {isMobile && (
         <Drawer
           variant="temporary"
           open={mobileOpen}
           onClose={handleDrawerToggle}
           ModalProps={{
-            keepMounted: true, // Better open performance on mobile.
+            keepMounted: true,
           }}
           sx={{
-            '& .MuiDrawer-paper': { boxSizing: 'border-box', width: drawerWidth },
+            '& .MuiDrawer-paper': {
+              boxSizing: 'border-box',
+              width: drawerWidth,
+            },
           }}
         >
           {drawerContent}
         </Drawer>
       )}
-      {/* Desktop Drawer */}
       {!isMobile && (
         <Drawer
           variant="permanent"
@@ -73,6 +78,13 @@ const Sidebar = ({ onSelect, selectedTab, mobileOpen, handleDrawerToggle }) => {
       )}
     </>
   );
+}
+
+Sidebar.propTypes = {
+  onSelect: PropTypes.func.isRequired,
+  selectedTab: PropTypes.string.isRequired,
+  mobileOpen: PropTypes.bool.isRequired,
+  handleDrawerToggle: PropTypes.func.isRequired,
 };
 
 export default Sidebar;

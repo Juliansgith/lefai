@@ -1,39 +1,60 @@
 // App.js
-import React, { useState } from 'react';
-import { CssBaseline, Box, createTheme, ThemeProvider, Toolbar } from '@mui/material';
+import React, { useState, Suspense, lazy, useContext } from 'react';
+import {
+  CssBaseline,
+  Box,
+  createTheme,
+  ThemeProvider as MuiThemeProvider,
+  Toolbar,
+  CircularProgress,
+} from '@mui/material';
+import { ThemeContext } from './ThemeContext';
 import Sidebar from './components/Sidebar';
-import HBOI from './pages/HBOI';
-import Vaardigheden from './pages/Vaardigheden';
 import AppBar from './components/AppBar';
+import ChatbotButton from './components/ChatbotButton';
+import ChatbotModal from './components/ChatbotModal';
 
-const App = () => {
+const HBOI = lazy(() => import('./pages/HBOI'));
+const Vaardigheden = lazy(() => import('./pages/Vaardigheden'));
+
+function App() {
   const [selectedTab, setSelectedTab] = useState('Vaardigheden');
-  const [darkMode, setDarkMode] = useState(true);
-
-  // State to control the mobile drawer
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [chatbotOpen, setChatbotOpen] = useState(false);
+
+  const { darkMode } = useContext(ThemeContext);
 
   const theme = createTheme({
     palette: {
       mode: darkMode ? 'dark' : 'light',
+      primary: {
+        main: '#1976d2',
+      },
+      background: {
+        default: darkMode ? '#121212' : '#f0f0f0',
+        paper: darkMode ? '#1e1e1e' : '#ffffff',
+      },
     },
     typography: {
       fontFamily: 'Roboto, Arial, sans-serif',
     },
   });
 
-  const handleThemeToggle = () => {
-    setDarkMode((prevMode) => !prevMode);
-  };
-
   const handleDrawerToggle = () => {
     setMobileOpen(!mobileOpen);
   };
 
-  const handleTabSelect = (tab) => {
+  const handleTabSelect = tab => {
     setSelectedTab(tab);
-    // Close the drawer when a tab is selected on mobile
     setMobileOpen(false);
+  };
+
+  const handleChatbotOpen = () => {
+    setChatbotOpen(true);
+  };
+
+  const handleChatbotClose = () => {
+    setChatbotOpen(false);
   };
 
   const renderContent = () => {
@@ -48,14 +69,10 @@ const App = () => {
   };
 
   return (
-    <ThemeProvider theme={theme}>
+    <MuiThemeProvider theme={theme}>
       <CssBaseline />
       <Box sx={{ display: 'flex' }}>
-        <AppBar
-          onThemeToggle={handleThemeToggle}
-          darkMode={darkMode}
-          handleDrawerToggle={handleDrawerToggle}
-        />
+        <AppBar handleDrawerToggle={handleDrawerToggle} />
         <Sidebar
           onSelect={handleTabSelect}
           selectedTab={selectedTab}
@@ -63,13 +80,29 @@ const App = () => {
           handleDrawerToggle={handleDrawerToggle}
         />
         <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
-          {/* Add a toolbar to account for the AppBar height */}
           <Toolbar />
-          {renderContent()}
+          <Suspense
+            fallback={
+              <Box
+                sx={{
+                  display: 'flex',
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                  height: '100%',
+                }}
+              >
+                <CircularProgress />
+              </Box>
+            }
+          >
+            {renderContent()}
+          </Suspense>
         </Box>
+        <ChatbotButton handleOpen={handleChatbotOpen} />
+        <ChatbotModal open={chatbotOpen} handleClose={handleChatbotClose} />
       </Box>
-    </ThemeProvider>
+    </MuiThemeProvider>
   );
-};
+}
 
 export default App;

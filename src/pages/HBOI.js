@@ -1,42 +1,31 @@
 // pages/HBOI.js
 import React, { useState, useEffect } from 'react';
+import { Box, Button, Typography, Paper, Grid, Container } from '@mui/material';
 import { parseJsonData, getDetailsForSelection } from '../helpers/jsonHelper';
-import {
-  Box,
-  Button,
-  Typography,
-  Paper,
-  Grid,
-  Container,
-  useTheme,
-  useMediaQuery,
-} from '@mui/material';
 import MarkdownContent from '../components/MarkdownContent';
 
-const HBOIComponent = () => {
+function HBOIComponent() {
   const [jsonData, setJsonData] = useState({});
   const [parsedData, setParsedData] = useState({});
   const [selectedArchitecture, setSelectedArchitecture] = useState('');
   const [selectedActivity, setSelectedActivity] = useState('');
-  const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
   useEffect(() => {
     fetch(`${process.env.PUBLIC_URL}/hboi-nl.json`)
-      .then((response) => response.json())
-      .then((data) => {
+      .then(response => response.json())
+      .then(data => {
         setJsonData(data);
         setParsedData(parseJsonData(data));
       })
-      .catch((error) => console.error('Error fetching JSON data:', error));
+      .catch(error => console.error('Error fetching JSON data:', error));
   }, []);
 
-  const handleArchitectureClick = (architecture) => {
+  const handleArchitectureClick = architecture => {
     setSelectedArchitecture(architecture);
     setSelectedActivity('');
   };
 
-  const handleActivityClick = (activity) => {
+  const handleActivityClick = activity => {
     setSelectedActivity(activity);
   };
 
@@ -50,10 +39,14 @@ const HBOIComponent = () => {
               Architectuurlagen
             </Typography>
             <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
-              {Object.keys(parsedData).map((architecture) => (
+              {Object.keys(parsedData).map(architecture => (
                 <Button
                   key={architecture}
-                  variant={selectedArchitecture === architecture ? 'contained' : 'outlined'}
+                  variant={
+                    selectedArchitecture === architecture
+                      ? 'contained'
+                      : 'outlined'
+                  }
                   onClick={() => handleArchitectureClick(architecture)}
                   fullWidth
                 >
@@ -70,10 +63,12 @@ const HBOIComponent = () => {
             </Typography>
             <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
               {selectedArchitecture &&
-                parsedData[selectedArchitecture].map((activity) => (
+                parsedData[selectedArchitecture].map(activity => (
                   <Button
                     key={activity}
-                    variant={selectedActivity === activity ? 'contained' : 'outlined'}
+                    variant={
+                      selectedActivity === activity ? 'contained' : 'outlined'
+                    }
                     onClick={() => handleActivityClick(activity)}
                     fullWidth
                   >
@@ -93,7 +88,11 @@ const HBOIComponent = () => {
           </Typography>
           <Grid container spacing={2}>
             {Object.entries(
-              getDetailsForSelection(jsonData, selectedArchitecture, selectedActivity)
+              getDetailsForSelection(
+                jsonData,
+                selectedArchitecture,
+                selectedActivity
+              )
             ).map(([level, { title }]) => (
               <Grid item xs={12} sm={6} key={level}>
                 <Paper elevation={2} sx={{ p: 2, height: '100%' }}>
@@ -109,6 +108,6 @@ const HBOIComponent = () => {
       )}
     </Container>
   );
-};
+}
 
 export default HBOIComponent;
